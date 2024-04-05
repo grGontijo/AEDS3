@@ -1,4 +1,5 @@
 package AEDS3;
+
 import java.io.RandomAccessFile;
 import java.lang.reflect.Constructor;
 
@@ -8,6 +9,7 @@ public class Arquivo<T extends interfaceObjeto> {
     Deletados deletados;
     Constructor<T> construtor;
     final int SKIP_METADADO = tamInt();
+    Stats stats;
 
     public int tamInt() {
         return Integer.SIZE / 8; // integer.size retorna em bits, por isso divide-se por 8.
@@ -24,6 +26,7 @@ public class Arquivo<T extends interfaceObjeto> {
                 arq.seek(0);
                 arq.writeInt(0);
             }
+            stats = new Stats();
         } catch (Exception e) {
             e.getStackTrace();
         }
@@ -46,6 +49,7 @@ public class Arquivo<T extends interfaceObjeto> {
         arq.seek(0);
         arq.writeInt(id_criado);
 
+        stats.somar(ba.length);
         return id_criado;
     }
 
@@ -178,7 +182,7 @@ public class Arquivo<T extends interfaceObjeto> {
     }
 
     public void close() throws Exception {
-        deletados.imprimirArvore();
+        // deletados.imprimirArvore();
         deletados.close();
         arq.close();
     }

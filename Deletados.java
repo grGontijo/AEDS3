@@ -1,4 +1,5 @@
 package AEDS3;
+
 import java.io.RandomAccessFile;
 import java.util.TreeMap;
 import java.util.Map;
@@ -36,8 +37,9 @@ public class Deletados { // tamanho, posicao
         }
     }
 
-    public void inserir(short tam, long pos) {
+    public void inserir(short tam, long pos) throws Exception {
         arvore.put(tam, pos);
+        atualizarArquivo();
     }
 
     public long posReaproveitada(short tamReg) throws Exception {
@@ -52,30 +54,34 @@ public class Deletados { // tamanho, posicao
         } else {
             long resp = arvore.get(tamMaiorIgual);
             arvore.remove(tamMaiorIgual);
+            atualizarArquivo();
             return resp;
         }
     }
 
-    public void close() throws Exception {// nome
-        arq.close();
-        File deletarArquivo = new File(nome + ".txt");
-        deletarArquivo.delete();
-        arq = new RandomAccessFile(nome + ".txt", "rw");
+    public void close() throws Exception {
         atualizarArquivo();
         arq.close();
     }
 
     private void atualizarArquivo() throws Exception {
-        arq.seek(0);
+        arq.close();
+        File deletarArquivo = new File(nome + ".txt");
+        deletarArquivo.delete();
+        arq = new RandomAccessFile(nome + ".txt", "rw");
+
         for (Map.Entry<Short, Long> no : arvore.entrySet()) {
             arq.writeShort(no.getKey());
             arq.writeLong(no.getValue());
         }
     }
 
-    public void imprimirArvore() throws Exception {
-        for (Map.Entry<Short, Long> entry : arvore.entrySet()) {
-            System.out.println("Chave: " + entry.getKey() + ", Valor: " + entry.getValue());
-        }
-    }
+    /*
+     * public void imprimirArvore() throws Exception {
+     * for (Map.Entry<Short, Long> entry : arvore.entrySet()) {
+     * System.out.println("Chave: " + entry.getKey() + ", Valor: " +
+     * entry.getValue());
+     * }
+     * }
+     */
 }
